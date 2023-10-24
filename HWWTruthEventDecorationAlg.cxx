@@ -219,6 +219,7 @@ StatusCode HWW::TruthEventDecorationAlg::execute(){
     std::vector<const xAOD::TruthParticle*> anti_e_Nu;
     std::vector<const xAOD::TruthParticle*> mu_Nu;
     std::vector<const xAOD::TruthParticle*> anti_mu_Nu;
+    TLorentzVector WpP4, WmP4, lpP4, lmP4, HiggsP4; // moved to beginning resolve scope issue
     for(size_t i = 0; i < truthNeutrinos->size(); i++){ //categorize neutrinos
         const xAOD::TruthParticle* part1 = truthNeutrinos->at(i); 
         if(part1->absPdgId() == 16){
@@ -459,7 +460,6 @@ StatusCode HWW::TruthEventDecorationAlg::execute(){
     antiNuPy(*eventInfo) =anti_LepNu->p4().Y();  
     antiNuPz(*eventInfo) =anti_LepNu->p4().Z();  
     antiNuE(*eventInfo)  =anti_LepNu->p4().E(); 
-    TLorentzVector WpP4, WmP4, lpP4, lmP4, HiggsP4;
     llP4 = LeptonP->p4() + LeptonM->p4(); // 5
     WpP4 = WpBoson->p4();
     WmP4 = WmBoson->p4();
@@ -543,7 +543,8 @@ StatusCode HWW::TruthEventDecorationAlg::execute(){
         MissET<<std::to_string(met->met())+","+std::to_string(met->mpx())+","+std::to_string(met->mpy())+","+std::to_string(met->phi())+",\n"; // #9
         LpNu<<particle_feature(LepNu); // #10
         LmNu<<particle_feature(anti_LepNu); // #11
-        HBoson<<particle_feature(Higgs); // #12
+        //HBoson<<particle_feature(Higgs); // #12 only valid when Higgs is stored as TruthParticle
+        HBoson<<vector_feature(HiggsP4); // #12 use "vector_feature" for non TruthPatricle Higgs four-vector
         CGLMP_xi_p_m_xyz << XiP[0] << ","<< XiP[1] << ","<< XiP[2] << ","<< XiM[0] << ","<< XiM[1] << ","<< XiM[2] << ",\n"; // #13,14,15,16,17,18
         /*
         CGLMP_xip_xy << XiP[0] << ",\n"; // #13
@@ -570,7 +571,7 @@ StatusCode HWW::TruthEventDecorationAlg::execute(){
         CGLMPLepZXDeco(*eventInfo) = Bzx;
         }
     else if(noTauNu == false || DF == false ){ // csv log null output                                              
-        std::string NotANumber = "-99999,-99999,-99999,-99999,-99999,-99999,-99999,-99999,-99999,-99999,\n";
+        std::string NotANumber = "-99999,-99999,-99999,-99999,-99999,-99999,-99999,-99999,-99999,\n";
         double XP[3] = {-99999,-99999,-99999};
         double XM[3] = {-99999,-99999,-99999};
         Bxy = -99999;
