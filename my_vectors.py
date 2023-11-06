@@ -148,7 +148,9 @@ class LorentzVector:
         return LorentzVector(A.Px() - self.px, A.Py() - self.py, A.Pz() - self.pz, A.E() - self.e)
     def __rsub__(self, A):
         return LorentzVector(self.px - A.Px(), self.py - A.Py(), self.pz - A.Pz(), self.e - A.E())
-
+    def Dot(self, A):
+        return (A.E()*self.e) - (A.Px()*self.px + A.Py()*self.py + A.Pz()*self.pz)
+  
 def four_momentum(particle, p4, idx):
     if p4 == None: p4=['E','px','py','pz']
     return LorentzVector(particle[p4[1]][idx],particle[p4[2]][idx],particle[p4[3]][idx],particle[p4[0]][idx])
